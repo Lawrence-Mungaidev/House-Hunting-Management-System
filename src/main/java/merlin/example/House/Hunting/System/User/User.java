@@ -12,7 +12,7 @@ import merlin.example.House.Hunting.System.CampusRequest.CampusRequest;
 import merlin.example.House.Hunting.System.DreamHouse.DreamHouse;
 import merlin.example.House.Hunting.System.Notification.Notification;
 import merlin.example.House.Hunting.System.Report.Report;
-import merlin.example.House.Hunting.System.Reviews.Reviews;
+import merlin.example.House.Hunting.System.Review.Review;
 import merlin.example.House.Hunting.System.Subscription.Subscription;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -85,7 +85,7 @@ public class User implements UserDetails {
             mappedBy = "student"
     )
     @JsonManagedReference
-    private List<Reviews> reviews;
+    private List<Review> reviews;
 
     @OneToMany(
             mappedBy = "student"

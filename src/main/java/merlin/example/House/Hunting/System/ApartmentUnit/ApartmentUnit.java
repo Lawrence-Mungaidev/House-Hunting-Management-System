@@ -8,8 +8,7 @@ import lombok.Setter;
 import merlin.example.House.Hunting.System.Apartment.Apartment;
 import merlin.example.House.Hunting.System.DreamHouse.DreamHouse;
 import merlin.example.House.Hunting.System.Media.Media;
-import merlin.example.House.Hunting.System.Report.Report;
-import merlin.example.House.Hunting.System.Reviews.Reviews;
+import merlin.example.House.Hunting.System.Review.Review;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -47,7 +46,7 @@ public class ApartmentUnit {
             mappedBy = "apartmentUnit"
     )
     @JsonManagedReference
-    private List<Reviews> reviews;
+    private List<Review> reviews;
 
     @OneToMany(
             mappedBy = "apartmentUnit"

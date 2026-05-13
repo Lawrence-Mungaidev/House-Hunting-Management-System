@@ -1,3 +1,13 @@
 spring:
   application:
     name: HOUSE-HUNTING-SYSTEM
+  datasource:
+    url: jdbc:mysql://localhost:3306/House_Hunting_System
+    user: merlin
+    password: merlin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect

@@ -1,4 +1,4 @@
-package merlin.example.House.Hunting.System.Reviews;
+package merlin.example.House.Hunting.System.Review;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class Reviews {
+public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Reviews {
     private String comment;
     private LocalDateTime createdAt;
 
-    public Reviews(User student, ApartmentUnit apartmentUnit, double rating, String comment) {
+    public Review(User student, ApartmentUnit apartmentUnit, double rating, String comment) {
         this.student = student;
         this.apartmentUnit = apartmentUnit;
         this.rating = rating;
