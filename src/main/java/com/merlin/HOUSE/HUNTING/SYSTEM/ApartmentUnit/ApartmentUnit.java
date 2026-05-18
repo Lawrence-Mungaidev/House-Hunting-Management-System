@@ -30,8 +30,8 @@ public class ApartmentUnit {
     private Apartment apartment;
     @Enumerated(EnumType.STRING)
     private UnitType unitType;
-    private int numberOfUnits;
-    private int vacantUnits;
+    private Integer numberOfUnits;
+    private Integer vacantUnits;
     @OneToMany(
             mappedBy = "apartmentUnit"
     )
@@ -54,6 +54,7 @@ public class ApartmentUnit {
     @JsonManagedReference
     private List<DreamHouse> dreamHouses;
 
+    public ApartmentUnit(){}
 
     public ApartmentUnit(Apartment apartment, UnitType unitType, int numberOfUnits, int vacantUnits, BigDecimal rentPrice) {
         this.apartment = apartment;

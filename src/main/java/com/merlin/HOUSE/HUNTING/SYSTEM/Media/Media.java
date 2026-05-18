@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import com.merlin.HOUSE.HUNTING.SYSTEM.ApartmentUnit.ApartmentUnit;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -18,6 +20,7 @@ public class Media {
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
     private String caption;
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(
@@ -25,6 +28,8 @@ public class Media {
     )
     @JsonBackReference
     private ApartmentUnit apartmentUnit;
+
+    public Media() {}
 
     public Media(String url, MediaType mediaType, String caption) {
         Url = url;
