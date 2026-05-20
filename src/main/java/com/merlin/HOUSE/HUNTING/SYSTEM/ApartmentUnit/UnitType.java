@@ -6,5 +6,5 @@ public enum UnitType {
     BEDSITTER,
     ONE_BEDROOM,
     TWO_BEDROOM,
-    THREE_BEDROOM,
+
 }

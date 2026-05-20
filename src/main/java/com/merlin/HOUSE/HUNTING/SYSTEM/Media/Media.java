@@ -19,8 +19,8 @@ public class Media {
     private String Url;
     @Enumerated(EnumType.STRING)
     private MediaType mediaType;
-    private String caption;
     private LocalDateTime createdAt;
+    private String publicId;
 
     @ManyToOne
     @JoinColumn(
@@ -31,9 +31,8 @@ public class Media {
 
     public Media() {}
 
-    public Media(String url, MediaType mediaType, String caption) {
+    public Media(String url, MediaType mediaType) {
         Url = url;
         this.mediaType = mediaType;
-        this.caption = caption;
     }
 }

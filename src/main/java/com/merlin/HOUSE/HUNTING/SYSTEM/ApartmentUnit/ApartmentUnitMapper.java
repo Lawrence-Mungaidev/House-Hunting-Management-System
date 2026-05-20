@@ -31,6 +31,6 @@ public class ApartmentUnitMapper {
                 .stream()
                 .map(Media::getUrl
                 ).toList();
-        return new ApartmentUnitResponse(apartmentUnit.getId(),apartmentUnit.getUnitType(), apartmentUnit.getNumberOfUnits(), apartmentUnit.getVacantUnits(), apartmentUnit.getRentPrice(),mediaUrlList);
+        return new ApartmentUnitResponse(apartmentUnit.getId(),apartmentUnit.getUnitType(), apartmentUnit.getNumberOfUnits(), apartmentUnit.getVacantUnits(), apartmentUnit.getRentPrice(),apartmentUnit.getAverageRating(),mediaUrlList);
     }
 }

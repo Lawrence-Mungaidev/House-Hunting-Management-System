@@ -1,5 +1,7 @@
 package com.merlin.HOUSE.HUNTING.SYSTEM.Apartment;
 
+import com.merlin.HOUSE.HUNTING.SYSTEM.ApartmentUnit.ApartmentUnit;
+import com.merlin.HOUSE.HUNTING.SYSTEM.ApartmentUnit.ApartmentUnitRepository;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Campus.Campus;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Campus.CampusRepository;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.BusinessRuleException;
@@ -21,6 +23,7 @@ public class ApartmentService {
     private final ApartmentMapper apartmentMapper;
     private final LocationRepository locationRepository;
     private final CampusRepository campusRepository;
+    private final ApartmentUnitRepository apartmentUnitRepository;
 
     public LandLordApartmentResponse createApartment(User authenticatedUser, ApartmentDto apartmentDto){
         Apartment apartment = apartmentMapper.toApartment(apartmentDto);
@@ -174,7 +177,36 @@ public class ApartmentService {
                     return apartmentMapper.toApartmentResponseDto(apartment,campusDistance);
                 } )
                 .toList();
-
     }
+
+    public List<ApartmentResponseDto> searchApartment(User authenticatedUser , SearchDto dto){
+        List<ApartmentUnit> apartmentUnitList = apartmentUnitRepository.searchApartmentUnits(dto.maxRent(),dto.minRent(),dto.unitType());
+
+        List<ApartmentResponseDto> apartmentList = new ArrayList<>();
+
+        if(authenticatedUser.getCampus() == null){
+            throw new BusinessRuleException("The user isn't under any campus");
+        }
+
+        Double campusLat = authenticatedUser.getCampus().getLocation().getLatitude();
+        Double campusLong = authenticatedUser.getCampus().getLocation().getLongitude();
+
+        for (ApartmentUnit apartmentUnit : apartmentUnitList){
+           Apartment apartment = apartmentUnit.getApartment();
+
+           Double apartmentLat = apartment.getLocation().getLatitude();
+           Double apartmentLong = apartment.getLocation().getLongitude();
+
+           Double campusDistance = calculateDistance(campusLat, campusLong, apartmentLat,apartmentLong);
+
+           if(apartmentList.stream().noneMatch(a -> a.apartmentId().equals(apartment.getId()))){
+               ApartmentResponseDto apartmentResponseDto = apartmentMapper.toApartmentResponseDto(apartment, campusDistance);
+               apartmentList.add(apartmentResponseDto);
+           }
+        }
+
+        return apartmentList;
+    }
+
 
 }

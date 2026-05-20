@@ -11,3 +11,7 @@ spring:
       ddl-auto: update
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
+  cloudinary:
+    cloud-name: dnnnu3ygt
+    api-key: 798976763622257
+    api-secret: TNqzyQY6CSoeS5FuHxP_r5t-wjM

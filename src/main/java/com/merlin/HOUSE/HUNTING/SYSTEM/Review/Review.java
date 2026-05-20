@@ -34,6 +34,8 @@ public class Review {
     private String comment;
     private LocalDateTime createdAt;
 
+    public Review() {}
+
     public Review(User student, ApartmentUnit apartmentUnit, double rating, String comment) {
         this.student = student;
         this.apartmentUnit = apartmentUnit;

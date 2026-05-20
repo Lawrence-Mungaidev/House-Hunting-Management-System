@@ -9,6 +9,7 @@ public record ApartmentUnitResponse (
         int numberOfUnits,
         int vacantUnits,
         BigDecimal rentPrice,
+        Double averageRatting,
         List<String> media
 ) {
 }
