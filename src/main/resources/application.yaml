@@ -15,3 +15,17 @@ spring:
     cloud-name: dnnnu3ygt
     api-key: 798976763622257
     api-secret: TNqzyQY6CSoeS5FuHxP_r5t-wjM
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mungailawrence52@gmail.com
+    password: ihfqnbxxzxgqmiza
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+kind: Application
+
