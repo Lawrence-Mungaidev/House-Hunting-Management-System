@@ -31,6 +31,7 @@ public class Appeal {
     @JsonBackReference
     private User landlord;
     private String message;
+    @Enumerated(EnumType.STRING)
     private Status status;
     private LocalDateTime createdAt;
     private String adminResponse;

@@ -53,7 +53,6 @@ public class Apartment {
     private List<Campus> campus;
     private LocalDateTime createdAt;
     private boolean isActive;
-    private int appealCount;
     private int reportCount;
     private double averageRating;
 

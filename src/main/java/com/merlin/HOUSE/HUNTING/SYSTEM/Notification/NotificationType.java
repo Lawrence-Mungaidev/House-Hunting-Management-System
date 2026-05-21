@@ -7,4 +7,6 @@ public enum NotificationType {
     REPORT,
     APPEAL,
     VIEWS,
+    REPORT_RESOLVED,
+    REPORT_DISMISSED
 }

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 public class Report {
 
-    @Id
+       @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
     @ManyToOne
@@ -31,8 +31,11 @@ public class Report {
     private Apartment apartment;
     private String complain;
     private LocalDateTime reportDate;
-    private LocalDateTime viewDate;
+    @Enumerated(EnumType.STRING)
     private Status status;
+    private LocalDateTime actionTakenAt;
+
+    public Report (){}
 
     public Report(User student, Apartment apartment, String complain) {
         this.student = student;
