@@ -5,7 +5,7 @@ public enum NotificationType {
     FAILED_SUBSCRIPTION,
     CAMPUS_REQUEST,
     REPORT,
-    APPEAL,
+    APPEAL_Notification,
     VIEWS,
     REPORT_RESOLVED,
     REPORT_DISMISSED

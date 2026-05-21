@@ -36,6 +36,12 @@ public class Appeal {
     private LocalDateTime createdAt;
     private String adminResponse;
     private LocalDateTime responseDate;
+    @ManyToOne
+    @JoinColumn(
+            name = "adminId"
+    )
+    @JsonBackReference
+    private User admin;
 
     public Appeal(){}
 

@@ -111,6 +111,12 @@ public class User implements UserDetails {
     )
     private Campus adminCampus;
 
+    @OneToMany(
+            mappedBy = "admin"
+    )
+    @JsonManagedReference
+    private List<Appeal> adminsAppeals;
+
     public User(){
 
     }

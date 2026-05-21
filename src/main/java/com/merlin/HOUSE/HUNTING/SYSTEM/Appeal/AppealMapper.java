@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Component
 public class AppealMapper {
 
-    public Appeal toAppeal(AppealDto dto){
+    public Appeal toAppeal(LandLordAppealDto dto){
         Appeal appeal = new Appeal();
         appeal.setMessage(dto.message());
         appeal.setStatus(Status.PENDING);
