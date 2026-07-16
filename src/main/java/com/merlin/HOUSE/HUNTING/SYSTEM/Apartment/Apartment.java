@@ -2,6 +2,7 @@ package com.merlin.HOUSE.HUNTING.SYSTEM.Apartment;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.merlin.HOUSE.HUNTING.SYSTEM.Subscription.Subscription;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,6 +75,12 @@ public class Apartment {
     )
     @JsonManagedReference
     private List<Report> reports;
+
+    @OneToMany(
+            mappedBy = "apartment"
+    )
+    @JsonManagedReference
+    private List<Subscription> subscription;
 
     public Apartment(){
 

@@ -1,6 +1,7 @@
 package com.merlin.HOUSE.HUNTING.SYSTEM.Subscription;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.merlin.HOUSE.HUNTING.SYSTEM.Apartment.Apartment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,11 +19,11 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(
-            name = "landlordId"
-    )
     @JsonBackReference
-    private User landlord;
+    @JoinColumn(
+            name = "apartmentId"
+    )
+    private Apartment apartment;
     private String phoneNumber;
     private String mpesaReference;
     private BigDecimal amount;
@@ -35,8 +36,8 @@ public class Subscription {
 
     }
 
-    public Subscription(User landlord, String phoneNumber, BigDecimal amount) {
-        this.landlord = landlord;
+    public Subscription(Apartment apartment, String phoneNumber, BigDecimal amount) {
+        this.apartment = apartment;
         this.phoneNumber = phoneNumber;
         this.madeOn = LocalDateTime.now();
         this.status = Status.FREE_TRIAL;

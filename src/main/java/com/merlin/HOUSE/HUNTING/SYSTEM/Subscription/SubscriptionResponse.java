@@ -2,6 +2,7 @@ package com.merlin.HOUSE.HUNTING.SYSTEM.Subscription;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record SubscriptionResponse(
         String apartmentName,
@@ -9,6 +10,6 @@ public record SubscriptionResponse(
         BigDecimal amountPaid,
         LocalDateTime madeOn,
         LocalDateTime expiresOn,
-        int activeDays,
+        Long activeDays,
         Status status
 ) {}
