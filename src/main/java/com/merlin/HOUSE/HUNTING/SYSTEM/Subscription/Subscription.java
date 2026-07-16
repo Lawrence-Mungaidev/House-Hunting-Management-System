@@ -31,6 +31,10 @@ public class Subscription {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    public Subscription(){
+
+    }
+
     public Subscription(User landlord, String phoneNumber, BigDecimal amount) {
         this.landlord = landlord;
         this.phoneNumber = phoneNumber;

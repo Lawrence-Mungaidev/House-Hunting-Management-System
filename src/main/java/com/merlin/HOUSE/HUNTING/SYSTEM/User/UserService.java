@@ -56,6 +56,7 @@ public class UserService {
 
             user.setCampus(campus);
         }
+        // make a method for deleting and updating a profile pic
         if(dto.profilePicture() != null){
             user.setProfilePicture(dto.profilePicture());
         }

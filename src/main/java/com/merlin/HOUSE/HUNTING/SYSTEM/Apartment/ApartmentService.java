@@ -8,6 +8,7 @@ import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.BusinessRuleException;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.ResourceNotFound;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Location.Location;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Location.LocationRepository;
+import com.merlin.HOUSE.HUNTING.SYSTEM.User.Role;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -115,7 +116,7 @@ public class ApartmentService {
     }
 
     public List<ApartmentResponseDto> getAllApartments(){
-        return apartmentRepository.findAll()
+        return apartmentRepository.findAllByOrderByAverageRatingDesc()
                 .stream()
                 .map(apartment -> apartmentMapper.toApartmentResponseDto(apartment,null))
                 .toList();
@@ -206,6 +207,38 @@ public class ApartmentService {
         }
 
         return apartmentList;
+    }
+
+    public List<ApartmentResponseDto> getApartmentByName(String apartmentName, User authenticatedUser){
+       List<Apartment>   apartment = apartmentRepository.findByApartmentNameContaining(apartmentName);
+
+
+        if( authenticatedUser.getRole().equals(Role.SUPER_ADMIN)){
+
+
+            return apartment
+                    .stream()
+                    .map(a -> apartmentMapper.toApartmentResponseDto(a , null) )
+                    .toList();
+        }
+
+        if(authenticatedUser.getCampus() == null) {
+            throw new BusinessRuleException("The user isn't under any campus");
+        }
+
+        double campusLat = authenticatedUser.getCampus().getLocation().getLatitude();
+        double campusLong = authenticatedUser.getCampus().getLocation().getLongitude();
+
+        return apartment
+                .stream()
+                .map(
+
+                        a->  {
+                            double campusDistance = calculateDistance(a.getLocation().getLatitude(),a.getLocation().getLongitude(), campusLat,campusLong);
+                            return apartmentMapper.toApartmentResponseDto(a,campusDistance);
+                        }
+                ).toList();
+
     }
 
 

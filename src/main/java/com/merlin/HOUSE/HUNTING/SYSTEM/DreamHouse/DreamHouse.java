@@ -25,11 +25,13 @@ public class DreamHouse {
     private User student;
     @ManyToOne
     @JoinColumn(
-            name = "apartmentId"
+            name = "apartmentUnitId"
     )
     @JsonBackReference
     private ApartmentUnit apartmentUnit;
     private LocalDateTime createdAt;
+
+    public DreamHouse(){}
 
     public DreamHouse(User student, ApartmentUnit apartmentUnit) {
         this.student = student;

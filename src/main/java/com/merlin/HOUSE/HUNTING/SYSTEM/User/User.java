@@ -52,12 +52,6 @@ public class User implements UserDetails {
     private Campus campus;
 
     @OneToMany(
-            mappedBy = "requestedBy"
-    )
-    @JsonManagedReference
-    private List<CampusRequest> campusRequest;
-
-    @OneToMany(
             mappedBy = "landlord"
     )
     @JsonManagedReference

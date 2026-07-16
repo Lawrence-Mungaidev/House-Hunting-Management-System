@@ -55,6 +55,7 @@ public class Apartment {
     private boolean isActive;
     private int reportCount;
     private double averageRating;
+    private int appealsCount;
 
     @OneToMany(
             mappedBy = "apartment"
@@ -87,7 +88,6 @@ public class Apartment {
         this.campus = campus;
         this.createdAt = LocalDateTime.now();
         this.isActive = true;
-        this.appealCount = 0;
         this.reportCount = 0;
     }
 }
