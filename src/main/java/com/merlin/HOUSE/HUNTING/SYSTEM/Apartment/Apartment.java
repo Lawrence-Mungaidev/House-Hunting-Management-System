@@ -57,6 +57,7 @@ public class Apartment {
     private int reportCount;
     private double averageRating;
     private int appealsCount;
+    private Status status;
 
     @OneToMany(
             mappedBy = "apartment"

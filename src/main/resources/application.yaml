@@ -26,6 +26,8 @@ spring:
           auth: true
           starttls:
             enable: true
+  Subscription:
+    amount: 500
 
 kind: Application
 

@@ -28,7 +28,7 @@ public class Subscription {
     private String mpesaReference;
     private BigDecimal amount;
     private LocalDateTime madeOn;
-    private LocalDateTime expiredOn;
+    private LocalDateTime expireOn;
     @Enumerated(EnumType.STRING)
     private Status status;
 

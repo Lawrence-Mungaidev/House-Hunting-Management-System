@@ -20,13 +20,13 @@ public class SubscriptionMapper {
     }
 
     public SubscriptionResponse toSubscriptionResponse(Subscription subscription){
-                Long activeDays = ChronoUnit.DAYS.between(LocalDateTime.now(), subscription.getExpiredOn());
+                Long activeDays = ChronoUnit.DAYS.between(LocalDateTime.now(), subscription.getExpireOn());
 
       return   new SubscriptionResponse(
                 subscription.getApartment().getApartmentName(),
                 subscription.getPhoneNumber(),subscription.getAmount(),
                 subscription.getMadeOn(),
-                subscription.getExpiredOn(),
+                subscription.getExpireOn(),
                 activeDays,
                 Status.ACTIVE);
 
