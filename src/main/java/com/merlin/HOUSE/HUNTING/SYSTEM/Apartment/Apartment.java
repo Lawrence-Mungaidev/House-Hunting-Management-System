@@ -58,6 +58,8 @@ public class Apartment {
     private double averageRating;
     private int appealsCount;
     private Status status;
+    private LocalDateTime madeOn;
+    private LocalDateTime expireOn;
 
     @OneToMany(
             mappedBy = "apartment"
@@ -77,11 +79,11 @@ public class Apartment {
     @JsonManagedReference
     private List<Report> reports;
 
-    @OneToMany(
-            mappedBy = "apartment"
-    )
-    @JsonManagedReference
-    private List<Subscription> subscription;
+   @ManyToOne
+   @JoinColumn(
+           name = "subscriptionId"
+   )
+    private Subscription subscription;
 
     public Apartment(){
 

@@ -1,4 +1,4 @@
 package com.merlin.HOUSE.HUNTING.SYSTEM.Config;
 
-public class JWTAuthenticationFilter {
+public class JWTAuthenticationFilter  {
 }

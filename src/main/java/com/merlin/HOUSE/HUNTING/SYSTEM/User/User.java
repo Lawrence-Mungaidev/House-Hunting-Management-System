@@ -8,7 +8,6 @@ import lombok.Setter;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Apartment.Apartment;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Appeal.Appeal;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Campus.Campus;
-import com.merlin.HOUSE.HUNTING.SYSTEM.CampusRequest.CampusRequest;
 import com.merlin.HOUSE.HUNTING.SYSTEM.DreamHouse.DreamHouse;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Notification.Notification;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Report.Report;
@@ -44,6 +43,7 @@ public class User implements UserDetails {
     private boolean isActive;
     private LocalDateTime createdAt;
     private String profilePicture;
+    private LocalDateTime trialExpireOn;
     @ManyToOne
     @JoinColumn(
             name = "campusId"

@@ -16,6 +16,7 @@ public class UserMapper {
         user.setEmail(dto.email());
         user.setActive(true);
         user.setCreatedAt(LocalDateTime.now());
+        user.setTrialExpireOn(LocalDateTime.now().plusDays(30));
 
         return user;
     }

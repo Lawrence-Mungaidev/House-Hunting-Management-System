@@ -2,6 +2,7 @@ package com.merlin.HOUSE.HUNTING.SYSTEM.Subscription;
 
 import com.merlin.HOUSE.HUNTING.SYSTEM.Apartment.Apartment;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Apartment.ApartmentRepository;
+import com.merlin.HOUSE.HUNTING.SYSTEM.Mpesa.MpesaService;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Subscription.Status;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.BusinessRuleException;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.ResourceNotFound;
@@ -27,6 +28,7 @@ public class SubscriptionService {
     private final SubscriptionRepository subscriptionRepository;
     private final SubscriptionMapper subscriptionMapper;
     private  final ApartmentRepository apartmentRepository;
+    private MpesaService mpesaService;
 
     public String createSubscription(SubscriptionDto subscriptionDto, User authenticatedUser)  {
 
@@ -43,6 +45,7 @@ public class SubscriptionService {
             }
 
         }
+        Subscription subscription = subscriptionMapper.toSubscription(subscriptionDto);
 
 
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -52,19 +55,19 @@ public class SubscriptionService {
 
         }
 
-        // initialise mpesa stk push
+        String checkoutRequestId = mpesaService.initialiseSTKPush(subscriptionDto.phoneNumber(), totalAmount);
+
+        subscription.setApartment(apartmentList);
+        subscription.setAmount(totalAmount);
+        subscription.setMpesaReference(checkoutRequestId);
+        subscription.setStatus(Status.PENDING);
+        subscriptionRepository.save(subscription);
 
         for(Apartment apartment : apartmentList){
-            Subscription subscription = subscriptionMapper.toSubscription(subscriptionDto);
-
-            subscription.setApartment(apartment);
-            subscription.setAmount(subscriptionAmount);
-            subscription.setStatus(Status.PENDING);
-
-            subscriptionRepository.save(subscription);
+            apartment.setSubscription(subscription);
+            apartmentRepository.save(apartment);
 
         }
-
 
         return "Check your phone to Complete Payment";
     }
@@ -74,7 +77,7 @@ public class SubscriptionService {
             throw new BusinessRuleException("Only LANDLORD roles are supported");
         }
 
-        return subscriptionRepository.findByUserIdOrderByMadeOnDesc(authenticatedUser.getId())
+        return subscriptionRepository.findByApartment_LandlordOrderByMadeOnDesc(authenticatedUser)
                 .stream()
                 .map(subscriptionMapper :: toSubscriptionResponse)
                 .toList();
