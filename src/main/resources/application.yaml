@@ -28,6 +28,9 @@ spring:
             enable: true
   Subscription:
     amount: 500
+  jwt:
+    secret: trfYw9DT+hKHuJSg1ArawodzNgPqDk3sUg5NLXJbtdE=
+    expiration: 846000
   Mpesa:
     consumer-key: nFNE7c5rJ8rjHLG4JAKBA9KjUGHFwJgbjz4vLnf6sMvZSYbW
     consumer-secret: m1DGLv6dXA5DCdgQVfhJAli5H2EQuzMTqNIR8GNssER7aFGRYxMPAHsdLP7s3igH
