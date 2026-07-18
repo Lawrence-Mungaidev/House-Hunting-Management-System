@@ -135,11 +135,11 @@ public class MpesaService {
 
         List<Apartment> apartmentS = subscription.getApartment();
 
-        for (Apartment apartment : apartmentS ){
+        for (Apartment apartment : apartmentS ) {
 
-            if(apartment.getStatus().equals(com.merlin.HOUSE.HUNTING.SYSTEM.Apartment.Status.ACTIVE)){
+            if (apartment.getStatus().equals(com.merlin.HOUSE.HUNTING.SYSTEM.Apartment.Status.ACTIVE)) {
                 apartment.setExpireOn(apartment.getExpireOn().plusDays(30));
-            }else {
+            } else {
                 apartment.setExpireOn(LocalDateTime.now().plusDays(30));
             }
 
@@ -148,15 +148,10 @@ public class MpesaService {
 
             String message = "Subscription made Successfully, Apartment " + apartment.getApartmentName() + " will be active till " + apartment.getExpireOn();
 
-            notificationService.createNotification(apartment.getLandlord(),null, message, NotificationType.SUCCESS_SUBSCRIPTION);
+            notificationService.createNotification(apartment.getLandlord(), null, message, NotificationType.SUCCESS_SUBSCRIPTION);
 
             subscriptionRepository.save(subscription);
         }
-
-
-
-
-
 
     }
 }
