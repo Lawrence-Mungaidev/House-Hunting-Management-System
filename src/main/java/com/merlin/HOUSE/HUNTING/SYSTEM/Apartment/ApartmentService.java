@@ -9,8 +9,11 @@ import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.ResourceNotFound;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Location.Location;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Location.LocationRepository;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Notification.NotificationService;
+import com.merlin.HOUSE.HUNTING.SYSTEM.Notification.NotificationType;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.Role;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.User;
+import com.merlin.HOUSE.HUNTING.SYSTEM.User.UserRepository;
+import com.merlin.HOUSE.HUNTING.SYSTEM.User.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,7 @@ public class ApartmentService {
     private final CampusRepository campusRepository;
     private final ApartmentUnitRepository apartmentUnitRepository;
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     public LandLordApartmentResponse createApartment(User authenticatedUser, ApartmentDto apartmentDto){
         Apartment apartment = apartmentMapper.toApartment(apartmentDto);
@@ -35,7 +39,7 @@ public class ApartmentService {
         apartment.setLandlord(authenticatedUser);
         Location apartmentLocation = new Location(apartmentDto.apartmentLat(),  apartmentDto.apartmentLong());
 
-        setCampusToApartment(apartmentDto, apartment);
+        setApartmentToCampus(apartmentDto, apartment);
 
         LocalDateTime trialExpireOn = authenticatedUser.getTrialExpireOn();
 
@@ -48,6 +52,7 @@ public class ApartmentService {
             apartment.setExpireOn(null);
             apartment.setStatus(Status.IN_ACTIVE);
         }
+
 
         var savedLocation = locationRepository.save(apartmentLocation);
 
@@ -79,7 +84,7 @@ public class ApartmentService {
         }
 
         if(dto.campusId() != null){
-            setCampusToApartment(dto, apartment);
+            setApartmentToCampus(dto, apartment);
 
         }
 
@@ -88,7 +93,7 @@ public class ApartmentService {
         return apartmentMapper.toLandLordApartmentResponse(savedApartment);
     }
 
-    private void setCampusToApartment(ApartmentDto dto, Apartment apartment) {
+    private void setApartmentToCampus(ApartmentDto dto, Apartment apartment) {
         List<Campus> campusList = new ArrayList<>();
 
         for(Long campusId : dto.campusId() ){
@@ -97,9 +102,27 @@ public class ApartmentService {
 
             campusList.add(campus);
 
+            double campusDistance  = calculateDistance(apartment.getLocation().getLatitude(), apartment.getLocation().getLongitude(),
+                    campus.getLocation().getLatitude(), campus.getLocation().getLongitude());
+
+            if(campusDistance > 15 ){
+                apartment.setFlaggedApartment(true);
+
+                List<User> adminsCampus = userRepository.findByRoleAndAdminCampus(Role.ADMIN, campus);
+
+                for(User admin : adminsCampus){
+
+                    String message = apartment.getApartmentName() + " check out this apartment to see if its within your area";
+                    notificationService.createNotification(null, admin.getId() ,message, NotificationType.FLAGGED_APARTMENT);
+                }
+            }
+
+
+
         }
 
         apartment.setCampus(campusList);
+
     }
 
     public void activateApartment(Long apartmentId){

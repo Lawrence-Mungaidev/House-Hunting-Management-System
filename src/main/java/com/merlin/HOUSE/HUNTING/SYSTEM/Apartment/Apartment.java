@@ -34,6 +34,7 @@ public class Apartment {
     private User landlord;
     private String description;
     private int views;
+    private boolean flaggedApartment = false;
 
     @OneToOne
     @JoinColumn(
