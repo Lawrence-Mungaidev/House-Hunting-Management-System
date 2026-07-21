@@ -33,7 +33,8 @@ public class Apartment {
     @JsonBackReference
     private User landlord;
     private String description;
-    private int views;
+    private int todayViews;
+    private int totalViews;
     private boolean flaggedApartment = false;
 
     @OneToOne

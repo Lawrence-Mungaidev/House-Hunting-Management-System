@@ -62,4 +62,22 @@ public class ScheduledTask {
         }
     }
 
+    @Scheduled(cron = "0 0 20 * *")
+    public void countViews(){
+
+        List<Apartment> apartmentsList = apartmentRepository.findByStatus(Status.ACTIVE);
+
+        for (Apartment apartment : apartmentsList) {
+            int todayViews = apartment.getTodayViews();
+
+            String message =apartment.getApartmentName() + " has " + todayViews + " views.";
+
+            notificationService.createNotification(null, apartment.getLandlord().getId(), message, NotificationType.VIEWS);
+
+            apartment.setTodayViews(0);
+        }
+
+
+    }
+
 }

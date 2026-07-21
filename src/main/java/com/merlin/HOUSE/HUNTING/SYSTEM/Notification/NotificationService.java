@@ -16,13 +16,13 @@ public class NotificationService {
     private final NotificationMapper notificationMapper;
     private final UserRepository userRepository;
 
-    public void createNotification(User authenticatedUser, Long receiverId,  String message,NotificationType notificationType) {
+    public void createNotification(User sender, Long receiverId,  String message,NotificationType notificationType) {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new ResourceNotFound("receiver not found"));
 
         Notification notification = notificationMapper.toNotification(message, notificationType);
 
-        if(authenticatedUser != null) notification.setSender(authenticatedUser);
+        if(sender != null) notification.setSender(sender);
         else {
             notification.setSender(null);
         }

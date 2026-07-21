@@ -13,10 +13,11 @@ import com.merlin.HOUSE.HUNTING.SYSTEM.Notification.NotificationType;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.Role;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.User;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.UserRepository;
-import com.merlin.HOUSE.HUNTING.SYSTEM.User.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,10 @@ public class ApartmentService {
     private final ApartmentUnitRepository apartmentUnitRepository;
     private final NotificationService notificationService;
     private final UserRepository userRepository;
+
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String VIEWS = "views:";
+    private static final Duration WINDOW = Duration.ofHours(20);
 
     public LandLordApartmentResponse createApartment(User authenticatedUser, ApartmentDto apartmentDto){
         Apartment apartment = apartmentMapper.toApartment(apartmentDto);
@@ -106,7 +111,7 @@ public class ApartmentService {
                     campus.getLocation().getLatitude(), campus.getLocation().getLongitude());
 
             if(campusDistance > 15 ){
-                apartment.setFlaggedApartment(true);
+                apartment.setFlaggedApartment(true );
 
                 List<User> adminsCampus = userRepository.findByRoleAndAdminCampus(Role.ADMIN, campus);
 
@@ -117,8 +122,6 @@ public class ApartmentService {
                 }
             }
 
-
-
         }
 
         apartment.setCampus(campusList);
@@ -128,8 +131,6 @@ public class ApartmentService {
     public void activateApartment(Long apartmentId){
         Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(() -> new ResourceNotFound("Sorry but the apartment wasn't found"));
-
-
 
         apartment.setStatus(Status.ACTIVE);
         apartmentRepository.save(apartment);
@@ -162,9 +163,22 @@ public class ApartmentService {
                 .toList();
     }
 
-    public ApartmentResponseDto getApartmentById(User authenticatedUser,Long apartmentId){
+    public ApartmentResponseDto getApartmentById(User authenticatedUser,Long apartmentId, String ip){
         Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(() -> new ResourceNotFound("Sorry but the apartment wasn't found"));
+
+        Boolean exist = redisTemplate.hasKey(VIEWS + apartmentId + ":" + ip);
+
+       if(!exist){
+           apartment.setTodayViews(apartment.getTodayViews() + 1);
+           apartment.setTotalViews(apartment.getTotalViews() + 1);
+           redisTemplate.opsForValue().set(VIEWS + apartmentId + ":" + ip, "true", WINDOW);
+       }
+
+        if( authenticatedUser == null ){
+            return apartmentMapper.toApartmentResponseDto(apartment,null);
+
+        }
 
         if (authenticatedUser.getCampus() == null){
             return apartmentMapper.toApartmentResponseDto(apartment,null);
@@ -173,9 +187,6 @@ public class ApartmentService {
         if( apartment.getStatus().equals(Status.IN_ACTIVE) ){
             throw new BusinessRuleException("The apartment is currently deactivated");
         }
-
-
-       //  notificationService.createNotification(authenticatedUser, apartment.getLandlord().getId(),);
 
         Double apartmentLat = apartment.getLocation().getLatitude();
         Double apartmentLong = apartment.getLocation().getLongitude();
