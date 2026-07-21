@@ -7,7 +7,6 @@ public record CreateAdminDto(
         String lastName,
         String phoneNumber,
         String email,
-        String password,
         Long campusId,
         String profilePicture
 ) {

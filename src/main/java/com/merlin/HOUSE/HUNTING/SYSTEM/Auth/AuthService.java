@@ -4,10 +4,14 @@ import com.merlin.HOUSE.HUNTING.SYSTEM.Campus.Campus;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Campus.CampusRepository;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.DuplicateResourceException;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.ResourceNotFound;
+import com.merlin.HOUSE.HUNTING.SYSTEM.User.Role;
 import lombok.RequiredArgsConstructor;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.User;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +20,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final AuthMapper authMapper;
     private final CampusRepository campusRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public RegisterResponseDto register(RegisterDto dto){
 
@@ -30,7 +35,14 @@ public class AuthService {
 
         user.setCampus(campus);
 
-        // password Harshing
+        if(dto.role().equals(Role.LANDLORD)){
+            user.setTrialExpireOn(LocalDateTime.now().plusDays(30));
+
+        }
+
+        String hashedPassword = passwordEncoder.encode(dto.password());
+
+        user.setPassword(hashedPassword);
 
         var savedUser = userRepository.save(user);
 

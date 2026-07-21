@@ -3,9 +3,11 @@ package com.merlin.HOUSE.HUNTING.SYSTEM.Notification;
 public enum NotificationType {
     SUCCESS_SUBSCRIPTION,
     FAILED_SUBSCRIPTION,
+    EXPIRED_SUBSCRIPTION,
     REPORT,
     APPEAL_Notification,
     VIEWS,
     REPORT_RESOLVED,
-    REPORT_DISMISSED
+    REPORT_DISMISSED,
+    SUBSCRIBE_REMINDER
 }

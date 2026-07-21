@@ -13,4 +13,5 @@ public interface ApartmentRepository extends JpaRepository<Apartment,Long> {
     List<Apartment> findByCampusesContaining(Campus campus );
     List<Apartment> findByApartmentNameContaining(String apartmentName);
     List<Apartment> findAllByOrderByAverageRatingDesc();
+    List<Apartment> findByStatus(Status status);
 }

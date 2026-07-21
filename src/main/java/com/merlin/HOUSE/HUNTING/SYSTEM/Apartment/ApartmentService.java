@@ -8,11 +8,13 @@ import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.BusinessRuleException;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.ResourceNotFound;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Location.Location;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Location.LocationRepository;
+import com.merlin.HOUSE.HUNTING.SYSTEM.Notification.NotificationService;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.Role;
 import com.merlin.HOUSE.HUNTING.SYSTEM.User.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class ApartmentService {
     private final LocationRepository locationRepository;
     private final CampusRepository campusRepository;
     private final ApartmentUnitRepository apartmentUnitRepository;
+    private final NotificationService notificationService;
 
     public LandLordApartmentResponse createApartment(User authenticatedUser, ApartmentDto apartmentDto){
         Apartment apartment = apartmentMapper.toApartment(apartmentDto);
@@ -33,6 +36,18 @@ public class ApartmentService {
         Location apartmentLocation = new Location(apartmentDto.apartmentLat(),  apartmentDto.apartmentLong());
 
         setCampusToApartment(apartmentDto, apartment);
+
+        LocalDateTime trialExpireOn = authenticatedUser.getTrialExpireOn();
+
+        boolean trialStillActive = trialExpireOn != null && trialExpireOn.isAfter(LocalDateTime.now());
+
+        if(trialStillActive){
+            apartment.setExpireOn(trialExpireOn);
+            apartment.setStatus(Status.ACTIVE);
+        }else{
+            apartment.setExpireOn(null);
+            apartment.setStatus(Status.IN_ACTIVE);
+        }
 
         var savedLocation = locationRepository.save(apartmentLocation);
 
@@ -91,7 +106,9 @@ public class ApartmentService {
         Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(() -> new ResourceNotFound("Sorry but the apartment wasn't found"));
 
-        apartment.setActive(true);
+
+
+        apartment.setStatus(Status.ACTIVE);
         apartmentRepository.save(apartment);
     }
 
@@ -99,7 +116,7 @@ public class ApartmentService {
         Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(() -> new ResourceNotFound("Sorry but the apartment wasn't found"));
 
-        apartment.setActive(false);
+        apartment.setStatus(Status.IN_ACTIVE);;
         apartmentRepository.save(apartment);
     }
 
@@ -107,7 +124,7 @@ public class ApartmentService {
         Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(()-> new ResourceNotFound("Sorry but the apartment wasn't found"));
 
-        if (apartment.isActive() || !apartment.getApartmentUnits().isEmpty()){
+        if (apartment.getStatus().equals(Status.ACTIVE) || !apartment.getApartmentUnits().isEmpty()){
             throw new BusinessRuleException("You cant delete an apartment because its Active or has apartment units");
         }
 
@@ -129,6 +146,13 @@ public class ApartmentService {
         if (authenticatedUser.getCampus() == null){
             return apartmentMapper.toApartmentResponseDto(apartment,null);
         }
+
+        if( apartment.getStatus().equals(Status.IN_ACTIVE) ){
+            throw new BusinessRuleException("The apartment is currently deactivated");
+        }
+
+
+       //  notificationService.createNotification(authenticatedUser, apartment.getLandlord().getId(),);
 
         Double apartmentLat = apartment.getLocation().getLatitude();
         Double apartmentLong = apartment.getLocation().getLongitude();

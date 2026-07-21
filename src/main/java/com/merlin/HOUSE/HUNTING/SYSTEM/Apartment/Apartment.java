@@ -53,13 +53,13 @@ public class Apartment {
     )
     private List<Campus> campus;
     private LocalDateTime createdAt;
-    private boolean isActive;
     private int reportCount;
     private double averageRating;
     private int appealsCount;
     private Status status;
     private LocalDateTime madeOn;
     private LocalDateTime expireOn;
+    private boolean distanceFlagged = false;
 
     @OneToMany(
             mappedBy = "apartment"
@@ -97,7 +97,6 @@ public class Apartment {
         this.location = location;
         this.campus = campus;
         this.createdAt = LocalDateTime.now();
-        this.isActive = true;
         this.reportCount = 0;
     }
 }

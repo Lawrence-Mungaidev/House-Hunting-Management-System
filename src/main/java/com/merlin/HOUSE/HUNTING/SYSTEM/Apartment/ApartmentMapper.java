@@ -23,7 +23,6 @@ public class ApartmentMapper {
         apartment.setApartmentName(dto.apartmentName());
         apartment.setApartmentName(dto.apartmentName());
         apartment.setCreatedAt(LocalDateTime.now());
-        apartment.setActive(true);
         apartment.setAppealsCount(0);
         apartment.setReportCount(0);
         apartment.setAverageRating(0.0);

@@ -5,6 +5,7 @@ import com.merlin.HOUSE.HUNTING.SYSTEM.Campus.CampusRepository;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.DuplicateResourceException;
 import com.merlin.HOUSE.HUNTING.SYSTEM.Exception.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final CampusRepository campusRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserResponseDto createAdmin(CreateAdminDto dto){
         if(userRepository.findByEmail(dto.email()).isPresent()){
@@ -28,7 +30,9 @@ public class UserService {
         User user = userMapper.toUser(dto);
         user.setCampus(campus);
         user.setRole(Role.ADMIN);
-        //password Harshing
+        String password = "123456789HS";
+        String hashedPassword = passwordEncoder.encode(password);
+        user.setPassword(hashedPassword);
 
         var savedUser = userRepository.save(user);
 

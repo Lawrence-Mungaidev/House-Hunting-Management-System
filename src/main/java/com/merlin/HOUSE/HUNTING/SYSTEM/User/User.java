@@ -43,6 +43,7 @@ public class User implements UserDetails {
     private boolean isActive;
     private LocalDateTime createdAt;
     private String profilePicture;
+    @Column(nullable = false)
     private LocalDateTime trialExpireOn;
     @ManyToOne
     @JoinColumn(
