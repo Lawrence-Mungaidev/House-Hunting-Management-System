@@ -45,6 +45,7 @@ public class User implements UserDetails {
     private String profilePicture;
     @Column(nullable = false)
     private LocalDateTime trialExpireOn;
+    private boolean mustChangePassword;
     @ManyToOne
     @JoinColumn(
             name = "campusId"
