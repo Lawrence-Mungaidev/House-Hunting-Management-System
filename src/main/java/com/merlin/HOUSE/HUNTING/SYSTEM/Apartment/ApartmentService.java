@@ -69,9 +69,14 @@ public class ApartmentService {
     }
 
 
-    public LandLordApartmentResponse updateApartment(Long apartmentId, ApartmentDto dto){
+    public LandLordApartmentResponse updateApartment(Long apartmentId, ApartmentDto dto,User authenicatedUser){
+
         Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(() -> new ResourceNotFound("Sorry but the apartment wasn't found"));
+
+        if(!authenicatedUser.equals(apartment.getLandlord())){
+            throw new BusinessRuleException("Sorry only the landlord can do that");
+        }
 
         if(dto.apartmentName() != null ){
             apartment.setApartmentName(dto.apartmentName());
@@ -144,9 +149,13 @@ public class ApartmentService {
         apartmentRepository.save(apartment);
     }
 
-    public void deleteApartment(Long apartmentId){
+    public void deleteApartment(Long apartmentId, User authenticatedUser){
         Apartment apartment = apartmentRepository.findById(apartmentId)
                 .orElseThrow(()-> new ResourceNotFound("Sorry but the apartment wasn't found"));
+
+        if(!authenticatedUser.equals(apartment.getLandlord()) || authenticatedUser.getRole() != Role.SUPER_ADMIN){
+            throw new BusinessRuleException("Sorry you cannot delete this apartment");
+        }
 
         if (apartment.getStatus().equals(Status.ACTIVE) || !apartment.getApartmentUnits().isEmpty()){
             throw new BusinessRuleException("You cant delete an apartment because its Active or has apartment units");
@@ -217,11 +226,17 @@ public class ApartmentService {
         return EARTH_RADIUS * c;
     }
 
-    public List<ApartmentResponseDto> getApartmentsByCampus(User authenticatedUser){
-        Campus campus =authenticatedUser.getCampus();
+    public List<ApartmentResponseDto> getApartmentsByCampus(Long campusId, User authenticatedUser){
 
-        if (campus == null){
-            throw new BusinessRuleException("Only Students can view by Campus");
+        Campus campus;
+
+        if (authenticatedUser == null && campusId != null) {
+            campus = campusRepository.findById(campusId)
+                    .orElseThrow(()-> new ResourceNotFound("Sorry but the campus wasn't found"));
+        }else if (authenticatedUser != null){
+            campus = authenticatedUser.getCampus();
+        } else {
+            campus = null;
         }
 
         return apartmentRepository.findByCampusesContaining(campus)
@@ -238,17 +253,22 @@ public class ApartmentService {
                 .toList();
     }
 
-    public List<ApartmentResponseDto> searchApartment(User authenticatedUser , SearchDto dto){
+    public List<ApartmentResponseDto> searchApartment(User authenticatedUser , SearchDto dto, Long campusId){
         List<ApartmentUnit> apartmentUnitList = apartmentUnitRepository.searchApartmentUnits(dto.maxRent(),dto.minRent(),dto.unitType());
 
         List<ApartmentResponseDto> apartmentList = new ArrayList<>();
 
-        if(authenticatedUser.getCampus() == null){
-            throw new BusinessRuleException("The user isn't under any campus");
+        Campus campus = null ;
+
+        if(authenticatedUser.getCampus() == null &&  campusId != null){
+            campus = campusRepository.findById(campusId)
+                    .orElseThrow(()-> new ResourceNotFound("Campus wasn't found"));
+        }else if (authenticatedUser.getCampus() != null){
+            campus = authenticatedUser.getCampus();
         }
 
-        Double campusLat = authenticatedUser.getCampus().getLocation().getLatitude();
-        Double campusLong = authenticatedUser.getCampus().getLocation().getLongitude();
+        Double campusLat = campus.getLocation().getLatitude();
+        Double campusLong = campus.getLocation().getLongitude();
 
         for (ApartmentUnit apartmentUnit : apartmentUnitList){
            Apartment apartment = apartmentUnit.getApartment();
@@ -267,25 +287,22 @@ public class ApartmentService {
         return apartmentList;
     }
 
-    public List<ApartmentResponseDto> getApartmentByName(String apartmentName, User authenticatedUser){
+    public List<ApartmentResponseDto> searchApartmentByName(String apartmentName, User authenticatedUser, Long campusId){
        List<Apartment>   apartment = apartmentRepository.findByApartmentNameContaining(apartmentName);
 
+       Campus campus = null;
 
-        if( authenticatedUser.getRole().equals(Role.SUPER_ADMIN)){
 
+        if((authenticatedUser == null || authenticatedUser.getRole().equals(Role.SUPER_ADMIN)) && campusId != null){
 
-            return apartment
-                    .stream()
-                    .map(a -> apartmentMapper.toApartmentResponseDto(a , null) )
-                    .toList();
+            campus = campusRepository.findById(campusId)
+                    .orElseThrow(() -> new ResourceNotFound("Campus wasn't found"));
+        }else if (authenticatedUser.getCampus() != null){
+            campus = authenticatedUser.getCampus();
         }
 
-        if(authenticatedUser.getCampus() == null) {
-            throw new BusinessRuleException("The user isn't under any campus");
-        }
-
-        double campusLat = authenticatedUser.getCampus().getLocation().getLatitude();
-        double campusLong = authenticatedUser.getCampus().getLocation().getLongitude();
+        double campusLat = campus.getLocation().getLatitude();
+        double campusLong = campus.getLocation().getLongitude();
 
         return apartment
                 .stream()
